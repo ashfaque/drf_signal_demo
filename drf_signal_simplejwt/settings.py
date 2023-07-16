@@ -311,9 +311,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 NEW_USER_DEFAULT_PASSWORD = str(os.getenv('NEW_USER_DEFAULT_PASSWORD', '123456'))
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=120),
-    'REFRESH_TOKEN_LIFETIME' : timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS' : False,
-    'BLACKLIST_AFTER_ROTATION' : False,
-    'AUTH_HEADER_TYPES': ('JWT',),    # Used to specify the authentication type that should be used for JWT (JSON Web Token) authentication. By default, the Django REST framework expects the JWT token to be sent in the request header with the type 'Bearer'. However, if you set 'JWT' in AUTH_HEADER_TYPES, it will expect the token to be sent with the type 'JWT'. Use in Headers, `Authorization : JWT <token here>`, by default its, `Authorization : Bearer <token here>`.
+    # 'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=120),     # DEPRECATED
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=60),        # ? Access Token life time, Default: 5 mins.
+    'REFRESH_TOKEN_LIFETIME' : timedelta(days=7),           # ? Refresh Token life time, Default: 1 day.
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),    # ? When a new access token is generated using a refresh token, the expiration time of the refresh token is extended by this value. If the refresh token is not used to obtain a new access token within this period, it becomes inactive. This mechanism allows for sliding token expiration, meaning that as long as the user keeps using the application, their token remains valid. Default: 1 day.
+    'AUTH_HEADER_TYPES': ('JWT',),                          # ? Used to specify the authentication type that should be used for JWT (JSON Web Token) authentication. By default, the Django REST framework expects the JWT token to be sent in the request header with the type 'Bearer'. However, if you set 'JWT' in AUTH_HEADER_TYPES, it will expect the token to be sent with the type 'JWT'. Use in Headers, `Authorization : JWT <token here>`, by default its, `Authorization : Bearer <token here>`.
+    'ROTATE_REFRESH_TOKENS' : False,                        # ? When set to `True`, each time a refresh token is used, a new one is returned. The old refresh token will continue to work until it expires. Default is `False`. If you want to use this feature, you will also need to set `BLACKLIST_AFTER_ROTATION` to `True`. Otherwise, there will be a lot of refresh tokens.
+    'BLACKLIST_AFTER_ROTATION' : True,                      # If set to `True`, refresh tokens will be blacklisted if new access token is generated from it. Defaults to `False`.
+    'ALGORITHM': 'HS256',                                   # HMAC-SHA256. This is the default value.
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',       # Default: 'refresh_exp', The claim name to use for the token expiration time when using sliding token expiration.  This setting allows you to customize the name of the claim in the refresh token that holds the token's expiration time.  If you want to change the claim name to something other than the default, you can set this value to your preferred claim name.
 }
