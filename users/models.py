@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-import drf_signal_demo.base_functions as base_f
+import drf_signal_simplejwt.base_functions as base_f
 from django.utils import timezone
 
 
@@ -83,7 +83,7 @@ class UserDetail(AbstractUser):
     def save(self, *args, **kwargs):
         super(UserDetail, self).save(*args, **kwargs)
         try:
-            # from drf_signal_demo.base_functions import save_face_data_while_creating_user
+            # from drf_signal_simplejwt.base_functions import save_face_data_while_creating_user
             pk = self.pk
             action = 'create'
             if pk:

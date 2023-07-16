@@ -1,5 +1,5 @@
 """
-WSGI config for drf_signal_demo project.
+WSGI config for drf_signal_simplejwt project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "drf_signal_demo.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "drf_signal_simplejwt.settings")
 
 application = get_wsgi_application()
