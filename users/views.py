@@ -90,14 +90,15 @@ class LoginUserView(TokenObtainPairView):
 
 
 class LogoutUserView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         try:
+            print('Refresh Token -------->', request.data)
             token = RefreshToken(request.data.get('refresh_token'))
             token.blacklist()
-            return Response({'request_status': 1, 'msg': "Logout Success..."}, status=status.HTTP_200_OK)
+            return Response({'request_status': 1, 'msg': "Successfully logged out..."}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'request_status': 0, 'msg': "Already Logout..."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'request_status': 0, 'msg': "Invalid token or failed to logout..."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChangePasswordView(generics.UpdateAPIView):

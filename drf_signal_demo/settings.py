@@ -52,7 +52,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     # 'rest_framework.authtoken',
     # 'knox',
@@ -73,6 +75,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = "drf_signal_demo.urls"
@@ -308,8 +311,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 NEW_USER_DEFAULT_PASSWORD = str(os.getenv('NEW_USER_DEFAULT_PASSWORD', '123456'))
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(days=30),
-    'REFRESH_TOKEN_LIFETIME' : timedelta(days=30),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=120),
+    'REFRESH_TOKEN_LIFETIME' : timedelta(days=1),
     'ROTATE_REFRESH_TOKENS' : False,
-    'BLACKLIST_AFTER_ROTATION' : False
+    'BLACKLIST_AFTER_ROTATION' : False,
+    'AUTH_HEADER_TYPES': ('JWT',),    # Used to specify the authentication type that should be used for JWT (JSON Web Token) authentication. By default, the Django REST framework expects the JWT token to be sent in the request header with the type 'Bearer'. However, if you set 'JWT' in AUTH_HEADER_TYPES, it will expect the token to be sent with the type 'JWT'. Use in Headers, `Authorization : JWT <token here>`, by default its, `Authorization : Bearer <token here>`.
 }
