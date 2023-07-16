@@ -311,7 +311,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 NEW_USER_DEFAULT_PASSWORD = str(os.getenv('NEW_USER_DEFAULT_PASSWORD', '123456'))
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=120),       # ? Access Token life time, Default: 5 mins.
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=120),       # ? Access Token life time, Default: 5 mins. [KEEP THIS VALUE LOW FOR SECURITY REASONS].
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=60),        # ? Allows the access token's expiration to be extended each time it is used to hit an API before the access token expires. This feature is useful to keep the user session active as long as they are actively using the application, as long as the refresh token is valid.
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=7),           # ? Refresh Token life time, Default: 1 day.
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),    # ? When a new access token is generated using a refresh token, the expiration time of the refresh token is extended by this value. If the refresh token is not used to obtain a new access token within this period, it becomes inactive. This mechanism allows for sliding token expiration, meaning that as long as the user keeps using the application, their token remains valid. Default: 1 day.
