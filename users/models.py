@@ -119,6 +119,18 @@ class UserDetail(AbstractUser):
             pass
 
 
+class UserLog(models.Model):
+    user_details = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='log_user_details')
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
+    def __str__(self):
+        # return f"Log - ID: {self.id}"
+        return str(self.id)
+
+    class Meta:
+        db_table = 'user_log'
+
 # ? Types of fields in Django
 '''
 class SampleModel(models.Model):

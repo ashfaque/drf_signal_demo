@@ -70,8 +70,8 @@ class ListCreateUserSerializer(serializers.ModelSerializer):
 
                 validated_data['password_to_know'] = password
 
-                user_create = UserDetail.objects.create(**validated_data)
-                user_create.set_password(password)
+                user_create = UserDetail.objects.create(**validated_data)    # ! NB: Here we are creating a UserDetail instance.
+                user_create.set_password(password)                           # ! NB: Here we are updating a UserDetail instance. And this is the reason the pre_save and post_save signals are being called twice, once for creation and another for updation.
                 user_create.save()
 
             return validated_data

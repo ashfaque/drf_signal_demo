@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     # 'rest_framework.authtoken',
     # 'knox',
     "users",
+    # "users.apps.AppConfig",    # ! Signal (1/3) (Optional) - Just add the app name where the signal is registered. In this case its `users`.
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
