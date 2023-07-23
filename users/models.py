@@ -80,6 +80,31 @@ class UserDetail(AbstractUser):
     class Meta:
         db_table = 'user_detail'
 
+        # ! After adding indexing in the model, we need to run `python manage.py makemigrations` and `python manage.py migrate` to create the index in the database.
+        # ? Columns frequently used in WHERE clauses, JOIN conditions, and ORDER BY clauses are good candidates for indexing.
+        # * Primary Key, Foreign Keys and fields with unique=True in the model are automatically indexed by Django.
+        indexes = [
+            models.Index(fields=['user_type'], name='idx_user_detail_user_type'),  # ? idx_<table_name>_<field_name>[_<sequence_number>]
+            models.Index(fields=['user_code']),                                    # Index for unique constraint
+            models.Index(fields=['class_teacher']),                                # Index for ForeignKey field
+            models.Index(fields=['session', 'semester', 'stream', '-course']),     # ? Composite Index for frequent filtering in sequencial order of indexing (1,2,3,4), with descending order for `course`.
+            models.Index(fields=['dob']),                                          # Index for frequent date filtering
+            models.Index(fields=['is_deleted']),                                   # Index for frequent filter on boolean field
+            models.Index(fields=['registered_on']),                                # Index for frequent date filtering
+            models.Index(fields=['registered_by']),                                # ? If manually indexing ForeignKey field, then index the field with the same name as the field, not the _id suffix. Also, automatically indexed fields are replaced with the manually indexed fields in the database.
+        ]
+
+        '''
+        ## ! Rebuild indexes for a specific app's models
+        # python manage.py sqlsequencereset app_name | python manage.py dbshell
+
+        ## ! Rebuild all indexes for the entire database
+        # python manage.py sqlsequencereset | python manage.py dbshell
+
+        ## ? The `sqlsequencereset` command generates the SQL commands to reset sequences for the specified app or the entire database, and the `dbshell` command allows executing SQL commands directly in the database.
+        ### Index maintenance in MySQL is generally done using the `OPTIMIZE TABLE` statement to rebuild an index or the `ANALYZE TABLE` statement to analyze and update index statistics.
+        '''
+
     def save(self, *args, **kwargs):
         super(UserDetail, self).save(*args, **kwargs)
         try:
