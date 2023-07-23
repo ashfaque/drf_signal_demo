@@ -93,7 +93,7 @@ class UserDetail(AbstractUser):
             models.Index(fields=['registered_on']),                                # Index for frequent date filtering
             models.Index(fields=['registered_by']),                                # ? If manually indexing ForeignKey field, then index the field with the same name as the field, not the _id suffix. Also, automatically indexed fields are replaced with the manually indexed fields in the database.
         ]
-
+        # ! SHOW INDEX FROM <db_name>.<table_name>;
         '''
         ## ! Rebuild indexes for a specific app's models
         # python manage.py sqlsequencereset app_name | python manage.py dbshell
@@ -118,3 +118,97 @@ class UserDetail(AbstractUser):
         except:
             pass
 
+
+# ? Types of fields in Django
+'''
+class SampleModel(models.Model):
+    # AutoField: Automatically increments an integer primary key.
+    auto_field = models.AutoField(primary_key=True)
+
+    # BigAutoField: A 64-bit integer primary key guaranteed to fit numbers from 1 to 9223372036854775807.
+    big_auto_field = models.BigAutoField()
+
+    # BigIntegerField: A 64-bit integer that can store larger numbers.
+    big_integer_field = models.BigIntegerField()
+
+    # BinaryField: Stores raw binary data.
+    binary_field = models.BinaryField()
+
+    # BooleanField: A true/false field. The default form widget for this field is a CheckboxInput.
+    boolean_field = models.BooleanField()
+
+    # CharField: A field to store text-based values.
+    char_field = models.CharField(max_length=100)
+
+    # DateField: A date, represented in Python by a datetime.date instance.
+    date_field = models.DateField()
+
+    # DateTimeField: A field for date and time, represented in Python by a datetime.datetime instance.
+    date_time_field = models.DateTimeField()
+
+    # DecimalField: A fixed-precision decimal number, represented in Python by a Decimal instance.
+    decimal_field = models.DecimalField(max_digits=10, decimal_places=2)
+
+    # DurationField: A field for storing periods of time.
+    duration_field = models.DurationField()
+
+    # EmailField: A CharField that checks that the value is a valid email address.
+    email_field = models.EmailField()
+
+    # FileField: A file-upload field.
+    file_field = models.FileField(upload_to='files/')
+
+    # FloatField: A floating-point number, represented in Python by a float instance.
+    float_field = models.FloatField()
+
+    # ImageField: Inherits all attributes and methods from FileField but also validates that the uploaded object is a valid image.
+    image_field = models.ImageField(upload_to='images/')
+
+    # IntegerField: An integer field. Values from -2147483648 to 2147483647 are safe in all databases supported by Django.
+    integer_field = models.IntegerField()
+
+    # GenericIPAddressField: An IPv4 or IPv6 address, in string format (e.g., 192.0.2.30 or 2a02:42fe::4).
+    ip_address_field = models.GenericIPAddressField()
+
+    # JSONField: A field for storing JSON-encoded data.
+    json_field = models.JSONField()
+
+    # NullBooleanField: Like a BooleanField but allows NULL as one of the options.
+    null_boolean_field = models.NullBooleanField()
+
+    # PositiveIntegerField: Like an IntegerField, but must be either positive or zero (0).
+    positive_integer_field = models.PositiveIntegerField()
+
+    # PositiveSmallIntegerField: Like a PositiveIntegerField but only allows values under a certain (database-dependent) point.
+    positive_small_integer_field = models.PositiveSmallIntegerField()
+
+    # SlugField: A short label for something, containing only letters, numbers, underscores, or hyphens.
+    slug_field = models.SlugField()
+
+    # SmallAutoField: A 32-bit integer primary key automatically increments.
+    small_auto_field = models.SmallAutoField(primary_key=True)
+
+    # SmallIntegerField: Like an IntegerField but only allows values under a certain (database-dependent) point.
+    small_integer_field = models.SmallIntegerField()
+
+    # TextField: A large text field.
+    text_field = models.TextField()
+
+    # TimeField: A time, represented in Python by a datetime.time instance.
+    time_field = models.TimeField()
+
+    # URLField: A CharField for a URL, validated by URLValidator.
+    url_field = models.URLField()
+
+    # UUIDField: A field for storing universally unique identifiers. Uses Python's UUID class.
+    uuid_field = models.UUIDField()
+
+    # ArrayField: A field for storing arrays of data.
+    array_field = models.ArrayField(models.CharField(max_length=50), default=list)
+
+    # IPAddressField: A field for storing IPv4 or IPv6 addresses.
+    ip_address_field = models.IPAddressField()
+
+    def __str__(self):
+        return f"SampleModel - ID: {self.auto_field}"
+'''
