@@ -81,7 +81,7 @@ class UserDetail(AbstractUser):
         db_table = 'user_detail'
 
         # ! After adding indexing in the model, we need to run `python manage.py makemigrations` and `python manage.py migrate` to create the index in the database.
-        # ? Columns frequently used in WHERE clauses, JOIN conditions, and ORDER BY clauses are good candidates for indexing.
+        # ? Columns frequently used in WHERE clauses, JOIN conditions, and ORDER BY clauses are good candidates for indexing. Do also note, adding too many indexes can slow down CREATE or UPDATE or DELETE operations.
         # * Primary Key, Foreign Keys and fields with unique=True in the model are automatically indexed by Django.
         indexes = [
             models.Index(fields=['user_type'], name='idx_user_detail_user_type'),  # ? idx_<table_name>_<field_name>[_<sequence_number>]
