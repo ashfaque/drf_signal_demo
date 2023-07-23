@@ -18,14 +18,17 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class ListCreateUserSerializer(serializers.ModelSerializer):
     registered_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    password = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    # password = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
     class Meta:
         model = UserDetail
         fields = (
-            'user_type'
+            'username'
+            , 'first_name'
+            , 'last_name'
             , 'middle_name'
             , 'email'
+            , 'user_type'
             , 'user_code'
             , 'gender'
             , 'phone_no'
@@ -45,7 +48,8 @@ class ListCreateUserSerializer(serializers.ModelSerializer):
             , 'updated_by'
             , 'deleted_at'
             , 'deleted_by'
-            , 'password'    # ?
+            , 'is_active'
+            , 'is_superuser'
         )
 
     def create(self, validated_data):
@@ -61,11 +65,15 @@ class ListCreateUserSerializer(serializers.ModelSerializer):
                     raise APIException('Username already exists')
             
                 # password = User.objects.make_random_password()
-                # password = settings.NEW_USER_DEFAULT_PASSWORD
-                validated_data['password'] = settings.NEW_USER_DEFAULT_PASSWORD
-                validated_data['password_to_know'] = settings.NEW_USER_DEFAULT_PASSWORD
+                # password = UserDetail.objects.make_random_password()
+                password = settings.NEW_USER_DEFAULT_PASSWORD
+
+                validated_data['password_to_know'] = password
 
                 user_create = UserDetail.objects.create(**validated_data)
+                user_create.set_password(password)
+                user_create.save()
+
             return validated_data
 
         except Exception as ex:
