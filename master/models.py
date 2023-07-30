@@ -37,9 +37,9 @@ class CollegePlanMapping(models.Model):
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='cpm_plan')
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name='cpm_college')
     plan_start_date = models.DateTimeField(blank=True, null=True)
-    plan_valid_until = models.DateTimeField(blank=True, null=True)
+    plan_valid_until = models.DateTimeField(blank=True, null=True)    # * If this field is null then the plan is valid forever.
     created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)    # * If this field is false then the plan is expired.
     is_trial = models.BooleanField(default=False)
     trial_start_date = models.DateTimeField(blank=True, null=True)
     trial_end_date = models.DateTimeField(blank=True, null=True)
