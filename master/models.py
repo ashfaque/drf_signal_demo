@@ -54,6 +54,9 @@ class CollegePlanMapping(models.Model):
         return str(self.name)
 
     class Meta:
+        # * `unique_together`: set of fields that, when taken together, must have unique values across all the rows in the database table. It is used to enforce a database-level constraint that ensures the combination of values in the specified fields is unique.
+        # * So, no two rows in the table can have the same combination of values for the specified fields.
+        unique_together = ('plan', 'college')    # ? For one college only one plan can be active.
         db_table = 'college_plan_mapping'
 
 
