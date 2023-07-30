@@ -32,7 +32,7 @@ class CustomUserAdmin(UserAdmin):
                      'semester',
                      'stream',
                      'course',
-                    #  'college',
+                     'college',
                     #  'department',
                     #  'sub_department',
                  )

@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     # 'rest_framework.authtoken',
     # 'knox',
+    "master",
     "users",
     # "users.apps.AppConfig",    # ! Signal (1/3) (Optional) - Just add the app name where the signal is registered. In this case its `users`.
 ]
@@ -77,6 +78,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'corsheaders.middleware.CorsMiddleware',
+    "drf_signal_simplejwt.middleware.SubscriptionMiddleware",
 ]
 
 ROOT_URLCONF = "drf_signal_simplejwt.urls"

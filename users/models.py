@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 import drf_signal_simplejwt.base_functions as base_f
 from django.utils import timezone
+from master.models import College
 
 
 # Timestamp is always unique. Though the below code is not timestamp.
@@ -50,7 +51,7 @@ class UserDetail(AbstractUser):
     nationality = models.CharField(max_length=20, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     #is_admin = models.BooleanField(default=False)
-    # college = models.ForeignKey(College, on_delete=models.CASCADE, related_name='u_college', blank=True, null=True)
+    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name='u_college', blank=True, null=True)
     # department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='u_dept', blank=True, null=True)
     # sub_department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='u_sub_dept', blank=True, null=True)
     is_deleted = models.BooleanField(default=False)

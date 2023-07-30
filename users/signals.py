@@ -86,6 +86,7 @@ def post_migrate_handler(app_config, **kwargs):
 # #####################################################################################################
 # ################################### LESS COMMONLY USED SIGNALS ######################################
 # #####################################################################################################
+"""
 
 # pre_init signal
 @receiver(pre_init, sender=UserDetail)
@@ -128,3 +129,6 @@ def class_prepared_handler(sender, **kwargs):
     '''
     print(f"Class-Prepared Signal: Model class '{sender.__name__}' prepared.")
 
+
+
+"""
