@@ -324,3 +324,17 @@ SIMPLE_JWT = {
     'ALGORITHM': 'HS256',                                   # HMAC-SHA256. This is the default value.
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',       # Default: 'refresh_exp', The claim name to use for the token expiration time when using sliding token expiration.  This setting allows you to customize the name of the claim in the refresh token that holds the token's expiration time.  If you want to change the claim name to something other than the default, you can set this value to your preferred claim name.
 }
+
+'''
+from datetime import timedelta
+# from rest_framework.settings import api_settings
+REST_KNOX = {
+	'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
+	'AUTH_TOKEN_CHARACTER_LENGTH': 64,
+	'TOKEN_TTL': timedelta(hours=12),    # Token never expire if set to `None`.
+	'USER_SERIALIZER': 'knox.serializers.UserSerializer',
+	'TOKEN_LIMIT_PER_USER': None,
+	'AUTO_REFRESH': False,
+	#'EXPIRY_DATETIME_FORMAT': api_settings.DATETME_FORMAT,
+}
+'''
