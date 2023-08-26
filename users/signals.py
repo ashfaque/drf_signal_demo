@@ -132,3 +132,93 @@ def class_prepared_handler(sender, **kwargs):
 
 
 """
+
+# #####################################################################################################
+
+"""
+# Signal to save log in a table.
+
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
+from django.db import transaction
+from .models import TMasterSubscriptionCompanyMapping, TMasterSubscriptionCompanyMappingHistory
+
+'''
+Author: Ashfaque Alam
+Date: August 21, 2023
+Purpose: Logging older data of TMasterSubscriptionCompanyMapping before updating.
+'''
+@receiver(pre_save, sender=TMasterSubscriptionCompanyMapping)
+def create_log_on_user_pre_creation(sender, instance, **kwargs):
+    with transaction.atomic():
+        if not instance._state.adding:
+            original_instance = TMasterSubscriptionCompanyMapping.objects.get(pk=instance.pk)
+            # [original_instance.__dict__.pop(attr, None) for attr in ['_state', 'id']]
+            remove_attrs = lambda instance, attrs: [instance.__dict__.pop(attr, None) for attr in attrs]
+            remove_attrs(original_instance, ['_state', 'id'])
+            _ = TMasterSubscriptionCompanyMappingHistory.objects.create(**original_instance.__dict__)
+
+
+# In models.py
+'''
+    Author: Ashfaque Alam
+    Date: August 16, 2023
+    Purpose: Tagging company with subscriptions.
+    NB: Whatever updation made in this table, the older data will be logged in a separate table.
+'''
+class TMasterSubscriptionCompanyMappingAbstract(models.Model):
+    company = models.ForeignKey(TCoreCompany, on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s_related_company')    # ? [MANDATORY] Only one company_id will be stored in this table when tagged with any subscription_id.
+    subscription = models.ForeignKey(TCoreSubscription, on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s_related_subscription')    # ? [MANDATORY] Same subscription_id can be tagged with multiple company_ids.
+    users_limit = models.IntegerField(default=0)    # 0 means unlimited
+    active_inactive_date = models.DateTimeField(blank=True, null=True)    # If subscription is mapped with a company for the first time, this will be null, but if `is_active` status is changed. Then that date will be inserted here.
+    is_active = models.BooleanField(default=True)    # * If this field is false then the subscription/trial/grace time is expired. Otherwise if this field is true, and null in other datetime fields, then the subscription will be forever.
+    active_inactive_reason = models.TextField(blank=True, null=True)
+
+    subscription_valid_from = models.DateTimeField(blank=True, null=True)
+    subscription_valid_until = models.DateTimeField(blank=True, null=True)
+    grace_end_date = models.DateTimeField(blank=True, null=True)    # * If this field is `null` then no grace time is given. Also the `subscription_valid_until` will be treated as 'grace start date'.
+
+    is_trial = models.BooleanField(default=False)
+    trial_start_date = models.DateTimeField(blank=True, null=True)
+    trial_end_date = models.DateTimeField(blank=True, null=True)
+
+    is_cancelled = models.BooleanField(default=False)
+    cancellation_status_change_date = models.DateTimeField(blank=True, null=True)
+    cancellation_status_reason = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s_related_created_by', blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s_related_updated_by', blank=True, null=True)
+
+    mac_address = models.TextField(blank=True, null=True)
+    internal_ip_address = models.TextField(blank=True, null=True)
+    external_ip_address = models.TextField(blank=True, null=True)
+
+    # is_deleted = models.BooleanField(default=False)
+    # deleted_at = models.DateTimeField(blank=True, null=True)
+    # deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='msc_deleted_by', blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class TMasterSubscriptionCompanyMapping(TMasterSubscriptionCompanyMappingAbstract):
+
+    def __str__(self):
+        return str(self.id)
+
+    class Meta:
+        unique_together = ('subscription', 'company')    # Combination of data stored in fields `subscription` and `company` will be unique.
+        db_table = 't_master_subscription_company_mapping'
+
+
+class TMasterSubscriptionCompanyMappingHistory(TMasterSubscriptionCompanyMappingAbstract):
+
+    def __str__(self):
+        return str(self.id)
+
+    class Meta:
+        db_table = 't_master_subscription_company_mapping_history'
+
+"""
