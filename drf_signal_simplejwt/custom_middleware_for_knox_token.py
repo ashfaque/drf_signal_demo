@@ -46,11 +46,16 @@ def CheckSubscriptionMiddleware(get_response):
             user_obj, digest = TokenAuthentication().authenticate(request)    # Incorrect tokens will be handled here as well and a suitable error msg will also be thrown.
             if not user_obj.is_superuser:    # If user is a superuser and request is coming from an API hit, with Knox token.
                 user_company_obj = user_obj.cu_user.company if user_obj.cu_user.company else None
+                if not user_company_obj:
+                    return JsonResponse({
+                                'error': f'No company is assigned to user: {user_obj.username}.'
+                            }, status=403)
+
                 company_subscription_mapping_obj = TMasterSubscriptionCompanyMapping.objects.filter(company=user_company_obj).order_by('-created_at').first() if user_company_obj else None
 
                 if not company_subscription_mapping_obj:
                     return JsonResponse({
-                                'error': f'No company is assigned to user: {user_obj.username}.'
+                                'error': f'No subscription registered for the company: {user_company_obj.coc_name}.'
                             }, status=403)
 
                 # ? Check if the subscription has expired
@@ -66,7 +71,7 @@ def CheckSubscriptionMiddleware(get_response):
                     or company_subscription_mapping_obj.is_cancelled                                                                                                                # * or is_cancelled
                 ):
                     response_data = {
-                        'error': 'Subscription not active !!!'
+                        'error': f'Subscription not active for the company: {user_company_obj.coc_name}.'
                     }
                     return JsonResponse(response_data, status=403)
 
@@ -75,3 +80,4 @@ def CheckSubscriptionMiddleware(get_response):
         response = get_response(request)
         return response
     return middleware
+
