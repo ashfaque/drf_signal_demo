@@ -46,7 +46,7 @@ def CheckSubscriptionMiddleware(get_response):
             user_obj, digest = TokenAuthentication().authenticate(request)    # Incorrect tokens will be handled here as well and a suitable error msg will also be thrown.
             if not user_obj.is_superuser:    # If user is a superuser and request is coming from an API hit, with Knox token.
                 user_company_obj = user_obj.cu_user.company if user_obj.cu_user.company else None
-                company_subscription_mapping_obj = TMasterSubscriptionCompanyMapping.objects.get(company=user_company_obj) if user_company_obj else None
+                company_subscription_mapping_obj = TMasterSubscriptionCompanyMapping.objects.filter(company=user_company_obj).order_by('-created_at').first() if user_company_obj else None
 
                 if not company_subscription_mapping_obj:
                     return JsonResponse({
