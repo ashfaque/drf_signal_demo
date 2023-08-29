@@ -1,13 +1,19 @@
+## Features List
+- drf
+- [SimpleJWT](#simplejwt)
+- [Signal](/users/signals.py)
+- [Indexing](/users/models.py)
+- [Middleware](/drf_signal_simplejwt/middleware.py)
+- [django4-background-tasks](#django4-background-tasks)
+
+
+
 ### Run with
 `uvicorn drf_signal_simplejwt.asgi:application --reload --host 0.0.0.0 --port 8000 --workers 9 --use-colors --log-level info`
 
-### SU
-```sh
-Username: admin
-Password: admin
-```
 
-### Location of token_blacklist_outstandingtoken, token_blacklist_blacklistedtoken
+### SimpleJWT
+Location of token_blacklist_outstandingtoken & token_blacklist_blacklistedtoken
 ```
 Under rest_framework_simplejwt -> token_blacklist -> models.py -> OutstandingToken, BlacklistedToken
 ```
@@ -30,3 +36,10 @@ Under rest_framework_simplejwt -> token_blacklist -> models.py -> OutstandingTok
 * Table: `background_task_completedtask` contains all the completed / failed tasks log.
 * Model: `Task` can be used with Django ORM to fetch/modify the data in `background_task` table.
 
+
+
+### SU
+```sh
+Username: admin
+Password: admin
+```
