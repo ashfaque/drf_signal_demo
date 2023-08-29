@@ -341,15 +341,3 @@ REST_KNOX = {
 }
 '''
 
-# ? django4-background-tasks summary
-'''
-* pip install django4-background-tasks==1.2.8, register `background_task` in INSTALLED_APPS also `migrate` is needed.
-* Create app called dj_scheduler, add to INSTALLED_APPS, also create __init__.py file in it.
-* Under dj_scheduler/management/commands create a file with any name like dj_tasks_scheduler.py, which you can use with python manage.py dj_tasks_scheduler.
-* Create tasks.py file in each app where you want to schedule tasks. Register them in a file called registered_tasks.py in the main app. (This registered_tasks.py file is imported in that dj_tasks_scheduler.py file of dj_scheduler app. Where the `process_tasks` command is auto ran at the end to run all the commands in all the apps registered_tasks.py file. Also in dj_tasks_scheduler.py file, older tasks are auto deleted form the database and new tasks are added to the database.)
-* And running `python manage.py dj_tasks_scheduler` will run all the tasks registered in the registered_tasks.py file. Maybe make a launcher for that.
-
-Table: `background_task` contains all the active tasks list.
-Table: `background_task_completedtask` contains all the completed / failed tasks list.
-Model: `Task` can be used with Django ORM.
-'''

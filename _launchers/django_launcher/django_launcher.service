@@ -1,0 +1,8 @@
+[Unit]
+Description=django launcher
+
+[Service]
+ExecStart=/path_to_project_dir/_launchers/django_launcher/django_launcher.sh
+
+[Install]
+WantedBy=multi-user.target
