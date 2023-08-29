@@ -14,8 +14,12 @@ class Command(BaseCommand):
 
         # Run another management command
         try:
+            from background_task.models import Task
+            _ = Task.objects.all().delete()
             # ! delete all older tasks here, also import tasks files from all apps here and run from here with, `python manage.py schedulers`
             # ! better pick all the registered tasks from a file called, registered_tasks from main_app and run them here by importing.
+            from drf_signal_simplejwt.registered_tasks import registered_tasks
+            registered_tasks()
             call_command('process_tasks')    # This command (python manage.py process_tasks) will be executed after the script has finished.
             self.stdout.write(self.style.SUCCESS('process_tasks command executed'))
         except CommandError as e:
