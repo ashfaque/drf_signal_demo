@@ -27,7 +27,8 @@ from background_task.models import Task
 
 # @background(schedule=timezone.localtime(timezone.now()).replace(hour=0, minute=0, second=0, microsecond=0))
 # @background(schedule=5)
-@background(schedule=timezone.now().replace(hour=0, minute=0, second=0, microsecond=0))
+# @background(schedule=timezone.now().replace(hour=0, minute=0, second=0, microsecond=0))
+@background
 def test_task():
     # _ = Task.objects.filter(task_name=get_caller_task_name()).delete()
     # _ = Task.objects.filter(task_name=get_caller_task_name()).exclude(id=Task.objects.filter(task_name=get_caller_task_name()).latest('id').id).delete()
