@@ -17,6 +17,7 @@ from users.tasks import test_task
 def registered_tasks():
     # * Please Note: From today midnight i.e., 00:00:00 onwards we can schedule tasks. For example, Let say today is August 1, 2023. Then we can schedule tasks from Augusst 2, 2023 00:00:00 onwards.
     # ? The following constants are provided for `repeat`: Task.NEVER (default), Task.HOURLY, Task.DAILY, Task.WEEKLY, Task.EVERY_2_WEEKS, Task.EVERY_4_WEEKS.
+    # *  NB: If any task of tasks.py called like a normal funciton like this, test_task(), then it will run instantly but only once.
     midnight_time = timezone.now() + timezone.timedelta(days=1)    # Adding one day from today is important because if we don't d this, the task will run as soon as it is registered in the database. Let say, a task is for firing emails to users at 9pm, but it is registered at 6 pm then those emails will be fored at 6 pm when it was registered and at 9 pm as well. To avoid this we are adding 1 day to stop the instant trigger of task when registering.
 
     # test_task(repeat=10)
