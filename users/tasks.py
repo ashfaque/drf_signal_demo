@@ -37,5 +37,5 @@ def test_task():
     print('Today ---> ', today)
 
 # test_task(repeat=24*60*60)
-test_task(repeat=10)
+# test_task(repeat=10)
 # test_task.schedule(repeat=Task.DAILY, time=datetime.time(hour=8, minute=0))
