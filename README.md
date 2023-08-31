@@ -37,6 +37,26 @@ Under rest_framework_simplejwt -> token_blacklist -> models.py -> OutstandingTok
 * Model: `Task` can be used with Django ORM to fetch/modify the data in `background_task` table.
 
 
+### django-auditlog
+- add 'auditlog' to your project’s INSTALLED_APPS setting and run `python manage.py migrate`.
+```python
+# models.py
+from auditlog.registry import auditlog
+from auditlog.models import AuditlogHistoryField
+# Add field `history = AuditlogHistoryField()` in a model which needs to be logged.
+auditlog.register(ModelName)    # * Register model just below the model definition for audit log. Keep in mind, to only register it once. Else multiple entries will be created in the audit log table.
+```
+- An entry in the django admin with the name `Log entries` will be auto generated as soon as 'auditlog' was registered in INSTALLED_APPS and migrations were done. Having database table name, `auditlog_logentry`.
+```
+# Example of using the `history` field in the main model.
+MainModel.objects.filter(is_superuser=True).first().history.latest().__dict__
+MainModel.objects.filter(is_superuser=True).first().history.all().order_by('-timestamp')
+MainModel.objects.filter(is_superuser=True).first().history.latest().changes
+MainModel.objects.filter(is_superuser=True).first().history.latest().action    # CREATE = 0, UPDATE = 1, DELETE = 2, ACCESS = 3
+MainModel.objects.filter(is_superuser=True).first().history.latest().changes_dict
+MainModel.objects.filter(is_superuser=True).first().history.latest().changes_display_dict
+MainModel.objects.filter(is_superuser=True).first().history.latest().changes_str
+```
 
 ### SU
 ```sh

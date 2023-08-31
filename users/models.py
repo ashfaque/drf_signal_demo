@@ -5,6 +5,9 @@ import drf_signal_simplejwt.base_functions as base_f
 from django.utils import timezone
 from master.models import College
 
+from auditlog.registry import auditlog
+from auditlog.models import AuditlogHistoryField
+
 
 # Timestamp is always unique. Though the below code is not timestamp.
 def return_timestamped_user_code():
@@ -61,6 +64,7 @@ class UserDetail(AbstractUser):
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='u_updated_by')
     deleted_at = models.DateTimeField(blank=True, null=True)
     deleted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='u_deleted_by')
+    history = AuditlogHistoryField()    # ? Read the README.md for more info.
 
     def __str__(self):    # ? Shows the details of specific fields if a user prints the 'instance' of this model.
         # return str(self.id)
@@ -118,7 +122,8 @@ class UserDetail(AbstractUser):
                 pass
         except:
             pass
-
+# * Register model just below the model definition for audit log. Keep in mind, to only register it once. Else multiple entries will be created in the audit log table.
+auditlog.register(UserDetail)
 
 class UserLog(models.Model):
     user_details = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='log_user_details')

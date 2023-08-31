@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'background_task',    # `migrate` needed.
     'dj_scheduler',
+    'auditlog',    # `migrate` needed.
     # 'rest_framework.authtoken',
     # 'knox',
     "master",
