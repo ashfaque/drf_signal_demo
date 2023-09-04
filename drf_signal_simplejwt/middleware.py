@@ -39,7 +39,7 @@ def SubscriptionMiddleware(get_response):
                 # try:
                 access_token = AccessToken(jwt_token)
                 user = access_token.payload.get('user_id')    # int
-                print('User ID from AccessToken ----------> ', user)
+                print('User ID from AccessToken for SubscriptionMiddleware ----------> ', user)
 
                 user_obj = user_models.UserDetail.objects.get(id=user)
                 user_college_obj = user_obj.college if user_obj.college else None
@@ -120,3 +120,55 @@ class SubscriptionMiddleware:
         response = self.get_response(request)
         return response
 '''
+
+
+# myapp/middleware.py
+from django_user_agents.utils import get_user_agent
+
+class APIHitLoggerMiddleware:
+    EXCLUDED_PATHS = ['/users/login/', '/users/logout/', '/admin', '/admin/*', '/static/*', '/media/*']
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not is_excluded_path(request.path, self.EXCLUDED_PATHS) and not request.user.is_superuser:
+            jwt_token = request.META.get('HTTP_AUTHORIZATION', None)
+            if jwt_token:
+                jwt_token = jwt_token.split(' ')[1]
+                from rest_framework_simplejwt.tokens import AccessToken
+                # try:
+                access_token = AccessToken(jwt_token)
+                user_id = access_token.payload.get('user_id')    # int
+                print('User ID from AccessToken for APIHitLoggerMiddleware ----------> ', user_id)
+
+
+                # Get user agent information.
+                user_agent = get_user_agent(request)
+                browser_name = user_agent.browser.family
+                os_name = user_agent.os.family
+                external_ip = self.get_client_ip(request)    # Get remote IP address
+                internal_ip = request.META.get('REMOTE_ADDR')    # Get internal IP address (if behind a proxy)
+                # Get MAC address (not possible via HTTP request)
+
+                from users.models import UserAPIHitLog
+                _ = UserAPIHitLog.objects.create(
+                                            # user_id=request.user.id,
+                                            user_id=user_id,
+                                            api_name=request.path,
+                                            internal_ip=internal_ip,
+                                            external_ip=external_ip,
+                                            browser_name=browser_name,
+                                            os_name=os_name,
+                    )
+
+        response = self.get_response(request)
+        return response
+
+    def get_client_ip(self, request):
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip

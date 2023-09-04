@@ -58,6 +58,11 @@ MainModel.objects.filter(is_superuser=True).first().history.latest().changes_dis
 MainModel.objects.filter(is_superuser=True).first().history.latest().changes_str
 ```
 
+
+### django-user-agents
+Register this middleware [APIHitLoggerMiddleware](drf_signal_simplejwt/middleware.py) in [settings.py](drf_signal_simplejwt/settings.py) file.
+
+
 ### SU
 ```sh
 Username: admin

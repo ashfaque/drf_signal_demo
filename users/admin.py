@@ -73,3 +73,10 @@ class UserDetail(CustomUserAdmin):
     list_display = [field.name for field in UserDetail._meta.fields]
     # search_fields = ('id', 'email', 'user_code', 'username', 'user_type', 'phone_no', 'college__name', 'department__name', 'sub_department__name', 'is_deleted')
     search_fields = ('id', 'email', 'user_code', 'username', 'user_type', 'phone_no')
+
+
+@admin.register(UserAPIHitLog)
+class UserAPIHitLog(admin.ModelAdmin):
+    list_display = [field.name for field in UserAPIHitLog._meta.fields]
+    readonly_fields = [field.name for field in UserAPIHitLog._meta.fields]    # Read-only fields
+    search_fields = ('user', 'user__email', 'user__username', 'user__first_name', 'user__last_name', 'api_name')

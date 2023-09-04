@@ -125,6 +125,8 @@ class UserDetail(AbstractUser):
 # * Register model just below the model definition for audit log. Keep in mind, to only register it once. Else multiple entries will be created in the audit log table.
 auditlog.register(UserDetail)
 
+
+
 class UserLog(models.Model):
     user_details = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='log_user_details')
     comment = models.TextField(blank=True, null=True)
@@ -136,6 +138,24 @@ class UserLog(models.Model):
 
     class Meta:
         db_table = 'user_log'
+
+
+
+class UserAPIHitLog(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True, related_name='uahl_user')
+    api_name = models.CharField(max_length=255)
+    internal_ip = models.GenericIPAddressField()
+    external_ip = models.GenericIPAddressField()
+    browser_name = models.CharField(max_length=255)
+    os_name = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.api_name} - {self.timestamp}"
+
+    class Meta:
+        db_table = 'user_api_hit_log'
+
 
 # ? Types of fields in Django
 '''

@@ -82,6 +82,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'corsheaders.middleware.CorsMiddleware',
     "drf_signal_simplejwt.middleware.SubscriptionMiddleware",
+    "drf_signal_simplejwt.middleware.APIHitLoggerMiddleware",
 ]
 
 ROOT_URLCONF = "drf_signal_simplejwt.urls"
