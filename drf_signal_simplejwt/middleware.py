@@ -172,3 +172,34 @@ class APIHitLoggerMiddleware:
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip
+
+
+import socket
+from ipware import get_client_ip
+
+# ? Usage: In any views, you can access the IP addresses by, `request.local_ip` and `request.external_ip` respectively.
+class CaptureIPMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Get the client's local network IP
+        local_ip = socket.gethostbyname(socket.gethostname())
+        # local_ip, _ = get_client_ip(request)
+
+        # Get the client's external static IP
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            external_ip = x_forwarded_for.split(',')[0]
+        else:
+            external_ip = request.META.get('REMOTE_ADDR')
+
+        # Attach the IP addresses to the request object for easy access in views
+        request.local_ip = local_ip
+        request.external_ip = external_ip
+
+        print('local_ip---------------->', local_ip)
+        print('external_ip---------------->', external_ip)
+
+        response = self.get_response(request)
+        return response

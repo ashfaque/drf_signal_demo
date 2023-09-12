@@ -44,6 +44,18 @@ class ListCreateUserView(BaseListCreateAPIView):
     queryset = UserDetail.objects.filter(is_deleted=False)
     # pagination_class = OnOffPagination
     serializer_class = ListCreateUserSerializer
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            # queryset = self.get_queryset()
+            # serializer = self.get_serializer(queryset, many=True)
+            # return Response({'request_status': 1, 'msg': "Success", 'data': serializer.data}, status=status.HTTP_200_OK)
+
+            response = super().get(request, *args, **kwargs)
+            return Response({'request_status': 1, 'msg': "Success", 'data': response.data}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            raise e
 
 
 class LoginUserView(TokenObtainPairView):

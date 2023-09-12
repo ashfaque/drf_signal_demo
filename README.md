@@ -62,6 +62,12 @@ MainModel.objects.filter(is_superuser=True).first().history.latest().changes_str
 ### django-user-agents
 Register this middleware [APIHitLoggerMiddleware](drf_signal_simplejwt/middleware.py) in [settings.py](drf_signal_simplejwt/settings.py) file.
 
+# django-ipware
+```python
+from ipware import get_client_ip
+local_ip, _ = get_client_ip(request)
+```
+
 
 ### SU
 ```sh

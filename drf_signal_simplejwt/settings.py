@@ -81,8 +81,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'corsheaders.middleware.CorsMiddleware',
-    "drf_signal_simplejwt.middleware.SubscriptionMiddleware",
-    "drf_signal_simplejwt.middleware.APIHitLoggerMiddleware",
+    'drf_signal_simplejwt.middleware.SubscriptionMiddleware',
+    'drf_signal_simplejwt.middleware.APIHitLoggerMiddleware',
+    'drf_signal_simplejwt.middleware.CaptureIPMiddleware',
 ]
 
 ROOT_URLCONF = "drf_signal_simplejwt.urls"
