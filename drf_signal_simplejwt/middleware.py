@@ -1,16 +1,26 @@
 
 # ? Register this middleware under the MIDDLEWARE list in settings.py.
 
-from django.http import JsonResponse
-from datetime import date
 from users import models as user_models
 from master.models import CollegePlanMapping
-from rest_framework.exceptions import APIException
+from users.models import UserAPIHitLog
+
+from django.http import JsonResponse
 from django.contrib.auth.models import AnonymousUser
+from rest_framework.exceptions import APIException
+from rest_framework_simplejwt.tokens import AccessToken
+from django_user_agents.utils import get_user_agent
+
+from ipware import get_client_ip
+
+from pprint import pprint
+from datetime import date
+import fnmatch
+import socket
+
 
 
 def is_excluded_path(path: str, excluded_paths: list) -> bool:
-    import fnmatch
     for pattern in excluded_paths:
         if fnmatch.fnmatchcase(path, pattern):
             return True
@@ -25,7 +35,6 @@ def SubscriptionMiddleware(get_response):
         # if request.path.startswith('/api/'):
         # if request.path not in EXCLUDED_PATHS:
         if not is_excluded_path(request.path, EXCLUDED_PATHS) and not request.user.is_superuser:    # ? Subscription will only be checked if the request is not for an excluded path. And user is not superuser.
-            # from pprint import pprint
             # # pprint(request.__dict__)
             # print('request.user.is_authenticated---------------->', request.user.is_authenticated)
             # print('user---------------->', request.user)
@@ -35,7 +44,6 @@ def SubscriptionMiddleware(get_response):
             jwt_token = request.META.get('HTTP_AUTHORIZATION', None)
             if jwt_token:
                 jwt_token = jwt_token.split(' ')[1]
-                from rest_framework_simplejwt.tokens import AccessToken
                 # try:
                 access_token = AccessToken(jwt_token)
                 user = access_token.payload.get('user_id')    # int
@@ -122,8 +130,6 @@ class SubscriptionMiddleware:
 '''
 
 
-# myapp/middleware.py
-from django_user_agents.utils import get_user_agent
 
 class APIHitLoggerMiddleware:
     EXCLUDED_PATHS = ['/users/login/', '/users/logout/', '/admin', '/admin/*', '/static/*', '/media/*']
@@ -136,7 +142,6 @@ class APIHitLoggerMiddleware:
             jwt_token = request.META.get('HTTP_AUTHORIZATION', None)
             if jwt_token:
                 jwt_token = jwt_token.split(' ')[1]
-                from rest_framework_simplejwt.tokens import AccessToken
                 # try:
                 access_token = AccessToken(jwt_token)
                 user_id = access_token.payload.get('user_id')    # int
@@ -147,11 +152,10 @@ class APIHitLoggerMiddleware:
                 user_agent = get_user_agent(request)
                 browser_name = user_agent.browser.family
                 os_name = user_agent.os.family
-                external_ip = self.get_client_ip(request)    # Get remote IP address
-                internal_ip = request.META.get('REMOTE_ADDR')    # Get internal IP address (if behind a proxy)
+                internal_ip = socket.gethostbyname(socket.gethostname())    # Get internal/local IP address (if behind a proxy)
+                external_ip = self.get_client_ip(request)    # Get remote/external/static IP address
                 # Get MAC address (not possible via HTTP request)
 
-                from users.models import UserAPIHitLog
                 _ = UserAPIHitLog.objects.create(
                                             # user_id=request.user.id,
                                             user_id=user_id,
@@ -174,8 +178,6 @@ class APIHitLoggerMiddleware:
         return ip
 
 
-import socket
-from ipware import get_client_ip
 
 # ? Usage: In any views, you can access the IP addresses by, `request.local_ip` and `request.external_ip` respectively.
 class CaptureIPMiddleware:
@@ -203,3 +205,4 @@ class CaptureIPMiddleware:
 
         response = self.get_response(request)
         return response
+
