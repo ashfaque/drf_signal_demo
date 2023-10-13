@@ -70,6 +70,38 @@ local_ip, _ = get_client_ip(request)
 ```
 
 
+### Sync User Creation / Updation in this project & it will be auto reflected in the [drf_RabbitMQ_2_proj_sync](https://github.com/ashfaque/drf_RabbitMQ_2_proj_sync) project.
+- `pip install --no-cache-dir pika==1.3.2`
+- Create an app called `pubsub`.
+- Register the newly created app in `settings.py` & `urls.py` of main app.
+- Write the RabbitMQ server configurations in `settings.py` and also in `.env` file.
+- Create model `QueuePublishHistory` in pubsub app to save the queue publish history in RabbitMQ.
+- Create calss `ConvertObjsJSONEncoder` in `base_function.py` of main app to convert python objects to json serializable.
+- In `utils.py` of pubsub app, create a funciton `queue_msg_to_publish` which will save the data in `QueuePublishHistory` model.
+- Now create a `signal.py` file in users app and create a signal so that whenever a user instance is either created or updated a signal is fired in post_save method and a log is saved in the `QueuePublishHistory` model using the `queue_msg_to_publish` function.
+- Now create the `producer_service.py` file in the project main dir, keep it running in the background in a new instance.
+    + Have auto reconnection logic for both RabbitMQ and MySQL server if connection is lost.
+    + Have transactions for both RabbitMQ and MySQL.
+    + It will fetch all the rows in the `QueuePublishHistory` model, having status `('pending', 'error', 'expired')`.
+    + Then it will publish the message in their specified queue in the RabbitMQ queue as per the data in the model `QueuePublishHistory`.
+    + And then updates the status to `published` or `error` according to the situation.
+    + Auto logs in a `.log` file inside the `logs` dir.
+- Create a `deadletter_consumer.py` file in the project main dir, keep it running in the background in a new instance.
+    + NB: RESTART THIS SCRIPT IF MYSQL CONNECTION WAS TEMPORARILY DOWN. OTHERWISE, IT WILL NOT BE ABLE TO FETCH THE QUEUE NAMES FROM THE DB.
+    + Fetches the list of all the deadletter queue names from the model `QueuePublishHistory`.
+    + Have auto reconnection logic for RabbitMQ server if connection is lost.
+    + Consumes all the deadletter queues at once and consumes from all of them.
+    + After consuming the message it finds the message in the model `QueuePublishHistory` and updates its status to `'expired'`.
+- In another project, [drf_RabbitMQ_2_proj_sync](https://github.com/ashfaque/drf_RabbitMQ_2_proj_sync)
+    + A model is created with the name `ConflictingUserSyncLog`, to save the message having some conflicts.
+    + A `user_sync_consumer.py` is ran. 
+    + It also have the RabbitMQ reconnection logic written due to connection lost.
+    + It consumes from all the specified `QUEUE_NAMES_DEADLETTER_EXCHANGE_MAPPING` dict.
+    + After receiving the message it converts the json to python dict.
+    + It then checks if user was created / updated. According to that, it either creates the user or updates the user.
+    + And if any conflicts arises, like username already exists, then it saves the message along with other details in a model `ConflictingUserSyncLog`.
+
+
 ### SU
 ```sh
 Username: admin

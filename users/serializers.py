@@ -8,6 +8,8 @@ import datetime
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+# from pubsub.utils import queue_msg_to_publish
+
 # class ListCreateUserSerializer(serializers.ModelSerializer):
 # 	created_by = serializers.CharField(default=serializers.CurrentUserDefault())
 
@@ -73,6 +75,15 @@ class ListCreateUserSerializer(serializers.ModelSerializer):
                 user_create = UserDetail.objects.create(**validated_data)    # ! NB: Here we are creating a UserDetail instance.
                 user_create.set_password(password)                           # ! NB: Here we are updating a UserDetail instance. And this is the reason the pre_save and post_save signals are being called twice, once for creation and another for updation.
                 user_create.save()
+
+                # status: bool = queue_msg_to_publish(
+                #                                 queue_name=settings.RABBITMQ['USER_SYNC_QUEUE_NAME']
+                #                                 , exchange_name=settings.RABBITMQ['USER_SYNC_EXCHANGE_NAME']
+                #                                 , deadletter_queue_name=settings.RABBITMQ['USER_SYNC_QUEUE_NAME'] + '_DLQ'
+                #                                 , deadletter_exchange_name=settings.RABBITMQ['USER_SYNC_EXCHANGE_NAME'] + '_DLX'
+                #                                 , message_body_json=validated_data
+                #                                 # , expiration_secs=10    # * For testing purpose only.
+                #                 )
 
             return validated_data
 

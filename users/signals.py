@@ -1,3 +1,7 @@
+from copy import deepcopy
+from pprint import pprint
+from django.conf import settings
+from django.db import transaction
 from django.db.models.signals import (
     pre_save          # ? Before saving a model instance (create/update).
     , post_save       # ? After saving a model instance (create/update).
@@ -12,9 +16,43 @@ from django.db.models.signals import (
 )
 from django.dispatch import receiver
 from .models import UserDetail, UserLog
+from pubsub.utils import queue_msg_to_publish
 
 
 # ! Signal (3/3) - Add this funciton. This function will be called when a UserDetail instance is created
+
+
+@receiver(post_save, sender=UserDetail)
+def create_entry_queue_publish_history_user_post_creation(sender, instance, created, **kwargs):
+    '''
+    sender: <class 'users.models.UserDetail'>
+    instance: <UserDetail: UserDetail object (1)>
+    created: True
+    kwargs: {'signal': <django.db.models.signals.ModelSignal object at 0x0000012345678950>, 'update_fields': None, 'raw': False, 'using': 'default'}
+    '''
+
+    copied_user_instance_dict: dict = deepcopy(instance.__dict__)
+    copied_user_instance_dict.pop('_state', None)
+    copied_user_instance_dict.pop('_django_version', None)
+
+    if created:    # ? User is created.
+        # If a new UserDetail instance is created, create a new Log instance
+        copied_user_instance_dict.update(is_created=True)
+    else:          # ? User is updated.
+        copied_user_instance_dict.update(is_created=False)
+
+    with transaction.atomic():
+        status: bool = queue_msg_to_publish(
+                                queue_name=settings.RABBITMQ['USER_SYNC_QUEUE_NAME']
+                                , exchange_name=settings.RABBITMQ['USER_SYNC_EXCHANGE_NAME']
+                                , deadletter_queue_name=settings.RABBITMQ['USER_SYNC_QUEUE_NAME'] + '_DLQ'
+                                , deadletter_exchange_name=settings.RABBITMQ['USER_SYNC_EXCHANGE_NAME'] + '_DLX'
+                                , message_body_json=copied_user_instance_dict
+                                # , expiration_secs=10    # * For testing purpose only.
+                    )
+
+
+"""
 
 @receiver(pre_save, sender=UserDetail)
 def create_log_on_user_pre_creation(sender, instance, **kwargs):
@@ -82,6 +120,7 @@ def post_migrate_handler(app_config, **kwargs):
     '''
     print(f"Post-Migrate Signal: Migration completed for app '{app_config.name}'.")
 
+"""
 
 # #####################################################################################################
 # ################################### LESS COMMONLY USED SIGNALS ######################################
