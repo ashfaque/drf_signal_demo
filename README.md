@@ -5,6 +5,10 @@
 - [Indexing](/users/models.py)
 - [Middleware](/drf_signal_simplejwt/middleware.py)
 - [django4-background-tasks](#django4-background-tasks)
+- [django-auditlog](#django-auditlog)
+- [django-user-agents](#django-user-agents)
+- [django-ipware](#django-ipware)
+- [RabbitMQ](#RabbitMQ)
 
 
 
@@ -70,7 +74,8 @@ local_ip, _ = get_client_ip(request)
 ```
 
 
-### Sync User Creation / Updation from this project & it will be auto reflected in the [drf_RabbitMQ_2_proj_sync](https://github.com/ashfaque/drf_RabbitMQ_2_proj_sync) project.
+### RabbitMQ
+#### Sync User Creation / Updation from this project & it will be auto reflected in the [drf_RabbitMQ_2_proj_sync](https://github.com/ashfaque/drf_RabbitMQ_2_proj_sync) project.
 - `pip install --no-cache-dir pika==1.3.2`
 - Create an app called [pubsub](pubsub/).
 - Register the newly created app in [settings.py](drf_signal_simplejwt/settings.py#INSTALLED_APPS) & [urls.py](drf_signal_simplejwt/urls.py#L26) of main app.
