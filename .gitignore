@@ -148,4 +148,4 @@ static/
 _bkup
 /scripts/
 extended_settings.py
-test.py
+test.*

@@ -9,6 +9,7 @@
 - [django-user-agents](#django-user-agents)
 - [django-ipware](#django-ipware)
 - [RabbitMQ](#RabbitMQ)
+- [django-jet-reboot](#django-jet-reboot)
 
 
 
@@ -105,6 +106,64 @@ local_ip, _ = get_client_ip(request)
     + After receiving the message it converts the json to python dict.
     + It then checks if user was created / updated. According to that, it either creates the user or updates the user.
     + And if any conflicts arises, like username already exists, then it saves the message along with other details in a model [ConflictingUserSyncLog](https://github.com/ashfaque/drf_RabbitMQ_2_proj_sync/blob/main/users/models.py).
+
+
+### [django-jet-reboot](https://github.com/assem-ch/django-jet-reboot) - Customize Default Django Admin Page. Alternative for [django-admin_interface](https://pypi.org/project/django-admin-interface/)
+- In [requirements.txt](requirements.txt) file register these packages for Python 3.11.4.
+```
+django-jet-reboot==1.3.7
+google-api-python-client==2.114.0
+oauth2client==4.1.3
+```
+
+- In INSTALLED_APPS of [settings.py](drf_signal_simplejwt/settings.py) register:
+```
+INSTALLED_APPS = (
+    ...
+    'jet.dashboard',
+    'jet',    # It should be before `django.contrib.admin`
+    'django.contrib.admin',
+)
+```
+
+- Make sure django.template.context_processors.request context processor is enabled:
+```
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                ...
+                'django.template.context_processors.request',    # ! This one.
+                ...
+            ],
+        },
+    },
+]
+```
+
+- In [urls.py](drf_signal_simplejwt/urls.py) register the urls of django-jet-reboot.
+```
+urlpatterns = patterns(
+    '',
+    path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
+    path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
+    path('admin/', include(admin.site.urls)),
+    ...
+)
+```
+
+- Then do:
+    + `python manage.py migrate jet dashboard`
+    + `python manage.py collectstatic`
+- After that use it with your default django admin url.
+- More customization at the offical [documentation](https://django-jet-reboot.readthedocs.io/en/latest/dashboard_modules.html).
+
+
+
+
 
 
 ### SU
