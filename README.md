@@ -5,7 +5,7 @@
 - [Indexing](/users/models.py)
 - [Middleware](/drf_signal_simplejwt/middleware.py)
 - [django4-background-tasks](#django4-background-tasks)
-- [django-auditlog](#django-auditlog)
+- [django-auditlog](#django-auditlog), alternative: [django-simple-history](https://django-simple-history.readthedocs.io/en/latest/quick_start.html)
 - [django-user-agents](#django-user-agents)
 - [django-ipware](#django-ipware)
 - [RabbitMQ](#RabbitMQ)
@@ -43,6 +43,7 @@ Under rest_framework_simplejwt -> token_blacklist -> models.py -> OutstandingTok
 
 
 ### django-auditlog
+- NB: There is [django-simple-history](https://django-simple-history.readthedocs.io/en/latest/quick_start.html) v3.4.0, much better alternative of this.
 - add 'auditlog' to your project’s INSTALLED_APPS setting and run `python manage.py migrate`.
 ```python
 # models.py
