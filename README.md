@@ -108,7 +108,8 @@ local_ip, _ = get_client_ip(request)
     + And if any conflicts arises, like username already exists, then it saves the message along with other details in a model [ConflictingUserSyncLog](https://github.com/ashfaque/drf_RabbitMQ_2_proj_sync/blob/main/users/models.py).
 
 
-### [django-jet-reboot](https://github.com/assem-ch/django-jet-reboot) - Customize Default Django Admin Page. Alternative for [django-admin_interface](https://pypi.org/project/django-admin-interface/)
+### django-jet-reboot
+- Customize Default Django Admin Page, [github](https://github.com/assem-ch/django-jet-reboot). Alternative for [django-admin_interface](https://pypi.org/project/django-admin-interface/).
 - In [requirements.txt](requirements.txt) file register these packages for Python 3.11.4.
 ```
 django-jet-reboot==1.3.7
@@ -160,7 +161,12 @@ urlpatterns = patterns(
     + `python manage.py collectstatic`
 - After that use it with your default django admin url.
 - More customization at the offical [documentation](https://django-jet-reboot.readthedocs.io/en/latest/dashboard_modules.html).
-
+- [More custom django admins](https://github.com/iamfoysal/Best-Django-Admin-interface)
+    + [django-unfold](https://github.com/unfoldadmin/django-unfold)
+    + [django-admin-volt](https://github.com/app-generator/django-admin-volt)
+    + [django-semantic-admin](https://github.com/globophobe/django-semantic-admin)
+    + [django-jazzmin](https://github.com/farridav/django-jazzmin)
+    + [django-admin-env-notice](https://github.com/dizballanze/django-admin-env-notice)
 
 
 
