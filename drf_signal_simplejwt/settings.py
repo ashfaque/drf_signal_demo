@@ -320,7 +320,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 NEW_USER_DEFAULT_PASSWORD = str(os.getenv('NEW_USER_DEFAULT_PASSWORD', '123456'))
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=120),       # ? Access Token life time, Default: 5 mins. [KEEP THIS VALUE LOW FOR SECURITY REASONS].
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=525600),    # ? Access Token life time, Default: 5 mins. [KEEP THIS VALUE LOW FOR SECURITY REASONS]. Ideally, it should be 120 minutes.
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=60),        # ? Allows the access token's expiration to be extended each time it is used to hit an API before the access token expires. This feature is useful to keep the user session active as long as they are actively using the application, as long as the refresh token is valid.
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=7),           # ? Refresh Token life time, Default: 1 day.
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),    # ? When a new access token is generated using a refresh token, the expiration time of the refresh token is extended by this value. If the refresh token is not used to obtain a new access token within this period, it becomes inactive. This mechanism allows for sliding token expiration, meaning that as long as the user keeps using the application, their token remains valid. Default: 1 day.
@@ -355,3 +355,26 @@ RABBITMQ = {
     'USER_SYNC_EXCHANGE_NAME': os.environ.get('USER_SYNC_EXCHANGE_NAME', 'drf_exchange'),
     'USER_SYNC_QUEUE_NAME': os.environ.get('USER_SYNC_QUEUE_NAME', 'drf_queue'),
 }
+
+
+CELERY_BROKER_URL = 'redis://192.168.0.111:6379/0'
+CELERY_RESULT_BACKEND = 'redis://192.168.0.111:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24 * 365    # 1 year
+
+# ? Celery Periodic Tasks, `celery -A YOUR_PROJECT worker --loglevel=info`, `celery -A YOUR_PROJECT beat -l info`
+# ? NB: Celery worker is not officially supported on Windows. You can run the worker on Windows, but you will need to use the `--pool=solo` argument to the worker, or you will get errors. `celery -A YOUR_PROJECT worker --loglevel=info --pool=solo`
+from celery.schedules import crontab
+CELERY_BEAT_SCHEDULE = {
+    'print-task': {
+        'task': 'users.tasks.print_sum_till_input_num_celery_task',
+        # 'schedule': crontab(minute=0, hour=0),  # Executes daily at midnight
+        'schedule': 300,    # Executes every 300 seconds
+        'args': (10,),    # Arguments to pass to the task
+    },
+}
+
+

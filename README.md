@@ -10,6 +10,7 @@
 - [django-ipware](#django-ipware)
 - [RabbitMQ](#RabbitMQ)
 - [django-jet-reboot](#django-jet-reboot)
+- [celery](#celery)
 
 
 
@@ -168,6 +169,46 @@ urlpatterns = patterns(
     + [django-semantic-admin](https://github.com/globophobe/django-semantic-admin)
     + [django-jazzmin](https://github.com/farridav/django-jazzmin)
     + [django-admin-env-notice](https://github.com/dizballanze/django-admin-env-notice)
+
+
+### celery
+
+- `pip install celery[redis] redis flower`
+- Create a [celery.py](drf_signal_simplejwt/celery.py), with the contents.
+- Populate main dir [_\_init__.py](drf_signal_simplejwt/__init__.py) with the contents.
+- Add these in [settings.py](drf_signal_simplejwt/settings.py):
+    ```python
+    CELERY_BROKER_URL = 'redis://192.168.0.111:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://192.168.0.111:6379/0'
+    CELERY_ACCEPT_CONTENT = ['json']
+    CELERY_TASK_SERIALIZER = 'json'
+    CELERY_RESULT_SERIALIZER = 'json'
+    CELERY_TIMEZONE = 'UTC'
+    CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24 * 365    # 1 year
+
+    # ? Celery Periodic Tasks, `celery -A YOUR_PROJECT worker --loglevel=info`, `celery -A YOUR_PROJECT beat -l info`
+    # ? NB: Celery worker is not officially supported on Windows. You can run the worker on Windows, but you will need to use the `--pool=solo` argument to the worker, or you will get errors. `celery -A YOUR_PROJECT worker --loglevel=info --pool=solo`
+    from celery.schedules import crontab
+    CELERY_BEAT_SCHEDULE = {
+        'print-task': {
+            'task': 'users.tasks.print_sum_till_input_num_celery_task',
+            # 'schedule': crontab(minute=0, hour=0),  # Executes daily at midnight
+            'schedule': 300,    # Executes every 300 seconds
+            'args': (10,),    # Arguments to pass to the task
+        },
+    }
+    ```
+- Create [tasks.py](users/tasks.py) file in each app you want to use celery background task.
+- Call that task function `print_sum_till_input_num_celery_task` in your API, i.e., [views.py](users/views.py#CeleryBgTaskTestView) `CeleryBgTaskTestView` class. And call the background task function with `_sum = print_sum_till_input_num_celery_task.delay(PASS_ARGUMENTS_HERE)`.
+- Run celery workers: `celery -A YOUR_PROJECT worker --loglevel=info`.Note that Celery worker is not officially supported on Windows. You can run the worker on Windows, but you will need to use the `--pool=solo` argument to the worker, or you will get errors. `celery -A YOUR_PROJECT worker --loglevel=info --pool=solo`.
+- Run celery beat, if using it as task scheduler/cronjobs `celery -A YOUR_PROJECT beat -l info`.
+- Monitoring Celery with Flower, start with: `celery -A PROJECT_NAME flower --port=5555` and access http://localhost:5555
+- Add these in `.gitignore` file:
+    ```
+    celerybeat-schedule.*
+    celerybeat.pid
+    ```
+
 
 
 

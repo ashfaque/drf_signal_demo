@@ -9,5 +9,6 @@ urlpatterns = [
     path('logout/', views.LogoutUserView.as_view(), name = 'logout_user_view'),    # Use POST with Body, {"refresh_token": "token here"}
     path('password/change/', views.ChangePasswordView.as_view(), name = 'change_password_view'),
     path('password/forgot/', views.ForgotPasswordView.as_view(), name = 'forgot_password_view'),
+    path('celery_bg_task_test/', views.CeleryBgTaskTestView.as_view(), name = 'celery_bg_task_test_view'),
 
 ]

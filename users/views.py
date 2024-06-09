@@ -201,3 +201,18 @@ class ForgotPasswordView(APIView):
         except Exception as e:
             raise e
 
+
+class CeleryBgTaskTestView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        from users.tasks import print_sum_till_input_num_celery_task
+        _sum = print_sum_till_input_num_celery_task.delay(100000000)
+
+        print('Celery Task ID --->', _sum.id)
+        print('Celery Task Status --->', _sum.status)    # ? If 'PENDING' then `_sum.result` will return None. And if `SUCCESS` then `_sum.result` will return the result of the task.
+        print('Celery Task Result --->', _sum.result)    # ? This will not block the execution. It will return the result if the task is completed. And if the task is not completed then it will return `None`.
+        print('Celery Task Result --->', _sum.get())    # ? This will block the execution until the task is completed.
+
+        return Response({'request_status': 1, 'msg': "Celery Background Task Started..."}, status=status.HTTP_200_OK)
+

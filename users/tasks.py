@@ -41,3 +41,24 @@ def test_task():
 # test_task(repeat=24*60*60)
 # test_task(repeat=10)
 # test_task.schedule(repeat=Task.DAILY, time=datetime.time(hour=8, minute=0))
+
+
+
+#*############################################################ Celery ############################################################*#
+
+
+from celery import shared_task
+
+@shared_task#(bind=True, max_retries=3)
+def print_sum_till_input_num_celery_task(num: int):
+    _sum = 0
+    for i in range(num):
+        _sum += i
+    # try:
+    #     for i in range(num):
+    #         _sum += i
+    # except Exception as exc:
+    #     raise self.retry(exc=exc)
+    return _sum
+
+
