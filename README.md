@@ -172,7 +172,6 @@ urlpatterns = patterns(
 
 
 ### celery
-
 - `pip install celery[redis] redis flower`
 - Create a [celery.py](drf_signal_simplejwt/celery.py), with the contents.
 - Populate main dir [_\_init__.py](drf_signal_simplejwt/__init__.py) with the contents.

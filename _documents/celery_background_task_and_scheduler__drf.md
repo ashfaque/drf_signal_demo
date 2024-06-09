@@ -1347,5 +1347,21 @@ By configuring the result backend and managing the task result expiration, you c
 ---
 ---
 
+[First Steps with Celery](https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html)
+[Next Steps with Celery](https://docs.celeryq.dev/en/stable/getting-started/next-steps.html)
+[Workers Guide](https://docs.celeryq.dev/en/stable/userguide/workers.html)
+[Daemonization](https://docs.celeryq.dev/en/stable/userguide/daemonizing.html)
+[Periodic Tasks](https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html)
+[Routing Tasks](https://docs.celeryq.dev/en/stable/userguide/routing.html)
+[Monitoring and Management Guide](https://docs.celeryq.dev/en/stable/userguide/monitoring.html)
+[Security](https://docs.celeryq.dev/en/stable/userguide/security.html)
+[Optimizing](https://docs.celeryq.dev/en/stable/userguide/optimizing.html)
+[Debugging](https://docs.celeryq.dev/en/stable/userguide/debugging.html)
+[Concurrency](https://docs.celeryq.dev/en/stable/userguide/concurrency/index.html)
+[Signals](https://docs.celeryq.dev/en/stable/userguide/signals.html)
+[Testing with Celery](https://docs.celeryq.dev/en/stable/userguide/testing.html)
+[Extensions and Bootsteps](https://docs.celeryq.dev/en/stable/userguide/extending.html)
+[Configuration and defaults](https://docs.celeryq.dev/en/stable/userguide/configuration.html)
+[Documenting Tasks with Sphinx](https://docs.celeryq.dev/en/stable/userguide/sphinx.html)
 
 
